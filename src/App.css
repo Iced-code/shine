@@ -5,28 +5,6 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -42,14 +20,86 @@ body {
   transition: background-color 0.2s ease;
 }
 
+/* Search Form */
+.searchForm {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  padding: 0.75rem 1rem;
+  border: 2px solid #030339;
+  border-radius: 10px;
+  font-size: 1rem;
+  width: 250px;
+  outline: none;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.searchInput:focus {
+  box-shadow: 0 0 8px rgba(3, 3, 57, 0.4);
+}
+
+.searchButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #030339;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.searchButton:hover {
+  background-color: #1a1a6d;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 1rem;
+}
+
+/* Album Image */
+.albumCoverImage {
+  width: 300px;
+  max-width: 90%;
+  border-radius: 16px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.albumCoverImage:hover {
+  transform: scale(1.03);
+}
+
+.albumTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #030339;
+  margin-bottom: 0.25rem;
+}
+
+.albumMeta {
+  color: #222;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
 .albumCoverImage {
   border-radius: 12px;
   width: 300px;
   transition: ease 0.2s;
 }
 .albumCoverImage:hover {
-  width: 350px;
+  width: 330px;
   height: auto;
+  box-shadow: 0 0 16px rgba(0,0,0,0.3);
 }
 
 .track-list {
@@ -69,7 +119,6 @@ body {
   overflow: hidden;
   z-index: 1;
 
-  /* Add this transition */
   transition: background-color 0.2s ease, border-left 0.3s ease;
   border-left: 0px solid transparent; /* default state */
 }
@@ -88,44 +137,6 @@ body {
   display: inline;
 }
 
-.track-meta .popularity {
-  text-align: right;
-}
-
-
-/* Shine effect */
-/* .track-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(0, 8, 255, 0.25) 25%,
-    rgb(255, 255, 255, 0.5) 50%,
-    rgba(0, 8, 255, 0.25) 75%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  transform: skewX(-25deg);
-}
-
-.track-item:hover::before {
-  animation: shine 0.75s ease-out;
-}
-
-@keyframes shine {
-  0% {
-    left: -75%;
-  }
-  100% {
-    left: 125%;
-  }
-} */
-
 .track-item::before {
   content: '';
   position: absolute;
@@ -140,6 +151,12 @@ body {
     rgba(0, 255, 255, 0.4) 50%,
     rgba(255, 255, 0, 0.2) 75%,
     rgba(255, 0, 255, 0) 100%
+
+    /* rgba(255, 255, 255, 0) 0%,
+    rgba(25, 255, 255, 0.2) 25%,
+    rgba(0, 255, 255, 0.4) 50%,
+    rgba(25, 255, 255, 0.2) 75%,
+    rgba(255, 255, 255, 0) 100% */
   );
   transform: skewX(-20deg);
   opacity: 0;
@@ -165,16 +182,10 @@ body {
   }
 }
 
-
 .track-item > * {
   position: relative;
   z-index: 2;
 }
-
-
-
-
-
 
 .track-header {
   margin-bottom: 8px;

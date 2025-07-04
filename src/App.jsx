@@ -35,37 +35,27 @@ function App() {
     setInput("");
   };
 
-  useEffect(() => {
-   /*  const fetchArtist = async () => {
-      // const res = await fetch(`http://localhost:5000/artist/${artistID}`);
-      const res = await fetch(`http://localhost:5000/artist/getArtist`);
-      const data = await res.json();
-      setArtist(data)
-    };
-    
-    fetchArtist(); */
-  })
-
   return (
     <div className='card'>
       {(
         <>
+          <h1>Shine</h1>
           <form onSubmit={fetchArtist} className='searchForm'>
             <input
               className='searchInput'
               type='text'
-              placeholder='Track name'
+              placeholder='Album, Track, Artist'
               value={input}
               onChange={(e) => {setInput(e.target.value)}}
             />
-            <button type="submit">Search</button>
+            <button type="submit" className='searchButton'>Search</button>
             {/* <button type='button' onClick={fetchArtist}>Load artist info</button> */}
           </form>
         </>
       )}
       {isLoading && (
         <>
-          <p>Loading...</p>
+          <p className='loading-text'>Loading...</p>
         </>
       )}
 
@@ -74,8 +64,8 @@ function App() {
           <a href={`https://open.spotify.com/album/${album.id}`} target='_blank'>
             <img className="albumCoverImage" src={album.images[0].url} alt="Album Cover" />
           </a>
-          <h2>{album.name}</h2>
-          <p>{album.artists.map(a => a.name).join(", ")} Released: {album.release_date}</p>
+          <h2 className='albumTitle'>{album.name}</h2>
+          <p className='albumMeta'>{album.artists.map(a => a.name).join(", ")} Released: {album.release_date}</p>
           <p></p>
 
           <ul className="track-list">
