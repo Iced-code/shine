@@ -5,6 +5,7 @@ import './App.css'
 
 function App() {
   const [input, setInput] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const [artist, setArtist] = useState(null);
   const [track, setTrack] = useState(null);
   const [tracks, setTracks] = useState(null);
@@ -13,6 +14,7 @@ function App() {
   const fetchArtist = async (e) => {
     e.preventDefault();
     if(!input.trim()) return;
+    setIsLoading(true);
 
     setAlbum("");
     setTracks("");
@@ -21,6 +23,11 @@ function App() {
       // const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
       const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
       const data = await res.json();
+
+      setIsLoading(false);
+
+      document.body.style.backgroundColor = "rgb(246, 188, 27)";
+
       setAlbum(data.album);
       setTracks(data.tracks);
     } catch(err) {}
@@ -41,20 +48,27 @@ function App() {
 
   return (
     <div className='card'>
-      { (
+      {(
         <>
-          <form onSubmit={fetchArtist}>
+          <form onSubmit={fetchArtist} className='searchForm'>
             <input
+              className='searchInput'
               type='text'
               placeholder='Track name'
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {setInput(e.target.value)}}
             />
             <button type="submit">Search</button>
             {/* <button type='button' onClick={fetchArtist}>Load artist info</button> */}
           </form>
         </>
       )}
+      {isLoading && (
+        <>
+          <p>Loading...</p>
+        </>
+      )}
+
       {album && (
         <>
           <a href={`https://open.spotify.com/album/${album.id}`} target='_blank'>
