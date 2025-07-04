@@ -18,8 +18,8 @@ function App() {
     setTracks("");
 
     try {
-      // const res = await fetch(`http://localhost:5000/track/getTrack/${input}`);
-      const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      // const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
       const data = await res.json();
       setAlbum(data.album);
       setTracks(data.tracks);
