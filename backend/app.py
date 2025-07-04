@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-CORS(app, origins=["https://shine-mc00hacmq-iced-codes-projects.vercel.app/"])
+CORS(app)
 
 load_dotenv()
 
