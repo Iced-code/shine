@@ -13,6 +13,7 @@ load_dotenv()
 CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
 
+
 def get_token():
     auth_string = f"{CLIENT_ID}:{CLIENT_SECRET}"
     b64_auth_string = base64.b64encode(auth_string.encode()).decode()
@@ -123,6 +124,27 @@ def get_album_info(album_name):
             "id": album_info["id"]
         },
         "tracks": sorted_tracks
+    })
+
+@app.route('/search/<search_input>')
+def search_item(search_input):
+    TOKEN = get_token()
+    headers = {
+        "Authorization": f"Bearer {TOKEN}"
+    }
+
+    params = {
+        "q": f"{search_input}",
+        "type": "album,track,artist",
+        "limit": 1
+    }
+
+    r = requests.get(f"https://api.spotify.com/v1/search", headers=headers, params=params)
+    result = r.json()
+    print(f"{result}")
+
+    return jsonify({
+        "result": result,
     })
 
 if __name__ == '__main__':

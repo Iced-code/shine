@@ -4,8 +4,9 @@ import './App.css'
 
 
 function App() {
-  const [input, setInput] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [input, setInput] = useState("");
+  const [searchType, setSearchType] = useState("album");
+  const [isLoading, setIsLoading] = useState(false);
   const [artist, setArtist] = useState(null);
   const [track, setTrack] = useState(null);
   const [tracks, setTracks] = useState(null);
@@ -20,9 +21,31 @@ function App() {
     setTracks("");
 
     try {
-      // const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
+      
+      /* if(searchType === "track"){
+        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      }
+      else if(searchType === "artist"){
+        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      }
+      else {
+        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      } */
+
+      //const res = await fetch(`http://localhost:5000/search/${input}`);
+      const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      // const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
       const data = await res.json();
+
+      /* if(searchType === "track"){
+        setTrack(data)
+      }
+      else if(searchType === "artist"){
+        setArtist(data);
+      }
+      else {
+        setAlbum(data.album);
+      } */
 
       setIsLoading(false);
 
@@ -51,6 +74,11 @@ function App() {
             <button type="submit" className='searchButton'>Search</button>
             {/* <button type='button' onClick={fetchArtist}>Load artist info</button> */}
           </form>
+          {/* 
+          <button type="button" className='searchButton' onClick={() => setSearchType("album")}>Album</button>
+          <button type="button" className='searchButton' onClick={() => setSearchType("track")}>Track</button>
+          <button type="button" className='searchButton' onClick={() => setSearchType("artist")}>Artist</button>
+          */}
         </>
       )}
       {isLoading && (

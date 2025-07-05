@@ -124,7 +124,8 @@ body {
 }
 
 .track-item:hover {
-  background-color: #8f18cb;
+  /* background-color: #8f18cb; */
+  background-color: #c763fa;
   border-left: 15px solid #030339;
   transition: ease 0.3s;
 }
