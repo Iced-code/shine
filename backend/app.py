@@ -30,21 +30,20 @@ def get_token():
     
     return r.json().get("access_token")
 
-@app.route('/artist/getArtist')
-def get_artist_info():
+@app.route('/artist/getArtist/<artist_name>')
+def get_artist_info(artist_name):
     TOKEN = get_token()
     headers = {
         "Authorization": f"Bearer {TOKEN}"
     }
 
     params = {
-        "q": "HUNTR/X",
+        "q": {artist_name},
         "type": "artist",
         "limit": 1
     }
 
     r = requests.get(f"https://api.spotify.com/v1/search", headers=headers, params=params)
-    print(r.json())
     artist = r.json()["artists"]["items"][0]
     artist_id = artist["id"]
 
@@ -69,8 +68,10 @@ def get_track_info(track_name):
     track = r.json()["tracks"]["items"][0]
     track_id = track["id"]
 
+    print(f"\n\n{track_id}\n\n")
+
     r = requests.get(f"https://api.spotify.com/v1/tracks/{track_id}", headers=headers)
-    print(r.json())
+    
     return jsonify(r.json())
 
 

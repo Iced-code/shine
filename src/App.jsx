@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { FaSpotify } from "react-icons/fa";
+
 import './App.css'
 
 
@@ -17,70 +18,79 @@ function App() {
     if(!input.trim()) return;
     setIsLoading(true);
 
-    setAlbum("");
-    setTracks("");
+
+    setTrack(null);
+    setArtist(null);
+    setAlbum(null);
+    setTracks(null);
+
+    // alert(searchType);
 
     try {
-      
-      /* if(searchType === "track"){
-        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      let res = null;
+      let data = null;
+
+      if(searchType === "track"){
+        res = await fetch(`${import.meta.env.VITE_API_URL}/track/getTrack/${input}`);
+        data = await res.json();
+        setTrack(data);
       }
       else if(searchType === "artist"){
-        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
-      }
-      else {
-        const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
-      } */
-
-      //const res = await fetch(`http://localhost:5000/search/${input}`);
-      // const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
-      const data = await res.json();
-
-      /* if(searchType === "track"){
-        setTrack(data)
-      }
-      else if(searchType === "artist"){
+        res = await fetch(`${import.meta.env.VITE_API_URL}/artist/getArtist/${input}`);
+        data = await res.json();
         setArtist(data);
       }
-      else {
-        setAlbum(data.album);
-      } */
 
+      // const res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
+      // const res = await fetch(`http://localhost:5000/album/getAlbum/${input}`);
+      // const data = await res.json();
+
+      res = await fetch(`${import.meta.env.VITE_API_URL}/album/getAlbum/${input}`);
+      data = await res.json();
       setIsLoading(false);
-
       document.body.style.backgroundColor = "rgb(246, 188, 27)";
 
       setAlbum(data.album);
       setTracks(data.tracks);
-    } catch(err) {}
+
+
+      
+
+
+      /* setAlbum(data.album);
+      setTracks(data.tracks); */
+    } catch(err) {
+      alert(err);
+    }
 
     setInput("");
   };
 
   return (
     <div className='card'>
-      {(
-        <>
-          <h1>Shine</h1>
-          <form onSubmit={fetchArtist} className='searchForm'>
-            <input
-              className='searchInput'
-              type='text'
-              placeholder='Album, Track, Artist'
-              value={input}
-              onChange={(e) => {setInput(e.target.value)}}
-            />
-            <button type="submit" className='searchButton'>Search</button>
-            {/* <button type='button' onClick={fetchArtist}>Load artist info</button> */}
-          </form>
-          {/* 
-          <button type="button" className='searchButton' onClick={() => setSearchType("album")}>Album</button>
-          <button type="button" className='searchButton' onClick={() => setSearchType("track")}>Track</button>
-          <button type="button" className='searchButton' onClick={() => setSearchType("artist")}>Artist</button>
-          */}
-        </>
-      )}
+      <h1>Shine</h1>
+      <form onSubmit={fetchArtist} className='searchForm'>
+        <input
+          className='searchInput'
+          type='text'
+          placeholder='Album, Track, Artist'
+          value={input}
+          onChange={(e) => {setInput(e.target.value)}}
+        />
+
+        <select
+          className="searchType"
+          value={searchType}
+          onChange={(e) => setSearchType(e.target.value)}
+        >
+          <option value="track">Track</option>
+          <option value="album">Album</option>
+          <option value="artist">Artist</option>
+        </select>
+
+        <button type="submit" className='searchButton'>Search</button>
+      </form>
+      
       {isLoading && (
         <>
           <p className='loading-text'>Loading...</p>
@@ -89,110 +99,96 @@ function App() {
 
       {album && (
         <>
-          <a href={`https://open.spotify.com/album/${album.id}`} target='_blank'>
-            <img className="albumCoverImage" src={album.images[0].url} alt="Album Cover" />
-          </a>
-          <h2 className='albumTitle'>{album.name}</h2>
-          <p className='albumMeta'>{album.artists.map(a => a.name).join(", ")} Released: {album.release_date}</p>
-          <p></p>
+          {!(artist || track) && (
+            <>
+              <a href={`https://open.spotify.com/album/${album.id}`} target='_blank'>
+              <img className="albumCoverImage" src={album.images[0].url} alt="Album Cover" />
+              </a>
+              <h2 className='albumTitle'>{album.name}</h2>
+              <p className='albumMeta'>{album.artists.map(a => a.name).join(", ")} ({album.release_date})</p>
+              <p></p>
+            </>
+          )}
+          {artist && (
+            <>
+              <a href={`https://open.spotify.com/artist/${artist.id}`} target='_blank'>
+              <img className="albumCoverImage" src={artist.images[0].url} alt="Artist Profile" />
+              </a>
+              <h2 className='albumTitle'>{artist.name}</h2>
+              <p className='albumMeta'>Latest album: {album.name}</p>
+              <p></p>
+            </>
+          )}
+          {track && (
+            <>
+              <a href={`https://open.spotify.com/track/${track.id}`} target='_blank'>
+                <img className="albumCoverImage" src={track.album.images[0].url} alt="Artist Profile" />
+              </a>
+              <p></p>
+            </>
+          )}
 
           <ul className="track-list">
-            {tracks.map((track, index) => (
-              <li key={track.id} className="track-item">
-                <div className="track-header">
-                  <div className="track-title">
-                    #{index+1}<span style={{ color: "#030339" }}>/</span><span style={{ color: "#bbb" }}>#{track.popularity}</span> {track.name}
-                  </div>
-                </div>
+            {track === null && tracks.map((aTrack, index) => (
+              <li key={aTrack.id} className="track-item">
+                {(
+                  <>
+                    <div className="track-header">
+                      <div className="track-title">
+                        #{index+1}<span style={{ color: "#030339" }}>/</span><span style={{ color: "#bbb" }}>#{aTrack.popularity}</span> {aTrack.name}
+                      </div>
+                    </div>
 
-                <div className="track-footer">
-                  <div className="track-artists">
-                    {track.artists.map((a) => a.name).join(", ")}
-                  </div>
-                  <a
-                    className="track-link"
-                    href={`https://open.spotify.com/track/${track.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FaSpotify size={24}/>
-                  </a>
-                </div>
-              </li>
-
-              
+                    <div className="track-footer">
+                      <div className="track-artists">
+                        {aTrack.artists.map((a) => a.name).join(", ")}
+                      </div>
+                      <a
+                        className="track-link"
+                        href={`https://open.spotify.com/track/${aTrack.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaSpotify size={24}/>
+                      </a>
+                    </div>
+                  </>
+                )}
+              </li>              
             ))}
+            {track !== null && (
+              <li key={track.id} className="track-item">
+                {(
+                  <>
+                    <div className="track-header">
+                      <div className="track-title">
+                        #{track.popularity} {track.name}
+                      </div>
+                    </div>
+
+                    <div className="track-footer">
+                      <div className="track-artists">
+                        {track.artists.map((a) => a.name).join(", ")}
+                      </div>
+                      <a
+                        className="track-link"
+                        href={`https://open.spotify.com/track/${track.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaSpotify size={24}/>
+                      </a>
+                    </div>
+                  </>
+                )}
+              </li>              
+            )}
           </ul>
-
-          {/* <li key={track.id} className="track-item">
-                <div className="track-header">
-                  <div className="track-title">
-                    #{index + 1} / {track.name}
-                  </div>
-                  <div className="track-popularity">
-                    {track.popularity}
-                  </div>
-                </div>
-
-                <div className="track-meta">
-                  {track.artists.map(a => a.name).join(", ")}
-                </div>
-
-                <a href={`https://open.spotify.com/track/${track.id}`} target='_blank' rel='noopener noreferrer'>
-                  Listen Now
-                </a>
-              </li> */}
-
-
-          
-          {/* <ul className="track-list">
-            {tracks.map((track, index) => (
-              <li key={track.id} className="track-item">
-                <div className="track-title">
-                  <div> #{index+1}<span style={{ color: "#030339" }}>/</span><span style={{ color: "#bbb" }}>#{track.popularity}</span> </div>
-                  </div>
-                <div className="track-meta">
-                  <div className='track-title'> {track.name} </div>
-                  {track.artists.map(a => a.name).join(", ")}<br />
-                </div>
-                <a href={`https://open.spotify.com/track/${track.id}`} target='_blank'>
-                  Listen Now
-                </a>
-              </li>
-            ))}
-          </ul> */}
         </>
       )}
+
     </div>
   );
-
-  /* return (
-    <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        
-        <iframe 
-          style={{borderRadius:"12px"}} 
-          src="https://open.spotify.com/embed/track/1CPZ5BxNNd0n0nF4Orb9JS?utm_source=generator" 
-          width="100%" 
-          height="352"
-          allowfullscreen="" 
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-          loading="lazy"
-        />
-
-        <iframe
-          style={{ borderRadius: '12px' }}
-          src="https://open.spotify.com/embed/album/14JkAa6IiFaOh5s0nMyMU9?utm_source=generator"
-          width="100%"
-          height="520"
-          allowFullScreen
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        />
-      </div>
-    </>
-  ) */
 }
 
 export default App
