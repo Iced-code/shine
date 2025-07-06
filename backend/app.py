@@ -68,8 +68,6 @@ def get_track_info(track_name):
     track = r.json()["tracks"]["items"][0]
     track_id = track["id"]
 
-    print(f"\n\n{track_id}\n\n")
-
     r = requests.get(f"https://api.spotify.com/v1/tracks/{track_id}", headers=headers)
     
     return jsonify(r.json())
@@ -82,7 +80,6 @@ def get_track_info_with_ID(track_ID):
     }
 
     r = requests.get(f"https://api.spotify.com/v1/tracks/{track_ID}", headers=headers)
-    # print(r.json())
     return r.json()
 
 @app.route('/album/getAlbum/<album_name>')
@@ -142,7 +139,6 @@ def search_item(search_input):
 
     r = requests.get(f"https://api.spotify.com/v1/search", headers=headers, params=params)
     result = r.json()
-    print(f"{result}")
 
     return jsonify({
         "result": result,
