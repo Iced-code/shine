@@ -17,39 +17,43 @@ function App() {
 
   const [artistList, setArtistList] = useState([]);
   const [viewingArtistList, setViewingArtistList] = useState(false);
-  
+
   const loadArtistList = () => {
     let followingList = JSON.parse(localStorage.getItem('artistFollowingList')) || [];
     
-    if(artistList.length > 0) {
+    if(followingList.length > 0) {
       setArtistList(followingList);
       setViewingArtistList(true);
     }
   }
 
-  const addToArtistList = (artistID) => {
+  const addToArtistList = (artist) => {
     let followingList;
     try {
       followingList = JSON.parse(localStorage.getItem('artistFollowingList')) || [];
     }
     catch(err){
       console.log("ouch");
-      followingList = [artistID];
+      followingList = [artist];
     };
 
-    if(followingList.length === 0) {
-      followingList = [artistID];
-    }
-    else if(!followingList.includes(artistID)) {
-      followingList.push(artistID);
-    }
+    if (!followingList.some((a) => a.id === artist.id)) {
+      const simplified = {
+        id: artist.id,
+        name: artist.name,
+        popularity: artist.popularity,
+        image: artist.images?.[0]?.url || null,
+      };
+      followingList.push(simplified);
 
-    setArtistList(followingList);
+      setArtistList(followingList);
+      localStorage.setItem('artistFollowingList', JSON.stringify(followingList));
+    }
+  }
 
-    localStorage.setItem('artistFollowingList', JSON.stringify(followingList));
-    
-    console.log("here");
-    alert(JSON.stringify(followingList));
+  const clearArtistList = () => {
+    localStorage.removeItem('artistFollowingList');
+    setArtistList([]);
   }
 
   const fetchArtist = async (e) => {
@@ -95,6 +99,67 @@ function App() {
     setInput("");
   };
 
+  if (viewingArtistList) {
+    const sorted = [...artistList].sort((a, b) => b.popularity - a.popularity);
+
+    return (
+      <>
+      <div className='card'>
+        <h1>Shine</h1>
+        <h2 style={{ color: "#030339" }}>🎧 Followed Artists Leaderboard</h2>
+
+        <ul className="track-list">
+          {[...artistList]
+            .sort((a, b) => b.popularity - a.popularity)
+            .map((artist, index) => (
+              <li key={artist.id} className="track-item" >
+                <div className="track-header">
+                  <div className="track-title">
+                    #{index + 1} <span style={{ color: "#bbb" }}>({artist.popularity})</span> {artist.name}
+                  </div>
+                </div>
+
+                <div className="track-footer">
+                  <div className="track-artists">
+                    <a
+                      href={`https://open.spotify.com/artist/${artist.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FaSpotify size={24}/>
+                    </a>
+                  </div>
+
+                  {artist.image && (
+                    <img
+                      src={artist.image}
+                      alt={artist.name}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "10px",
+                        marginLeft: "1rem",
+                        boxShadow: "0 0 4px rgba(0,0,0,0.2)",
+                      }}
+                    />
+                  )}
+                </div>
+              </li>
+            ))}
+        </ul>
+
+        <div style={{ marginTop: "20px", display: "flex", gap: "10px", justifyContent: "center" }}>
+          <button className="searchButton" onClick={() => setViewingArtistList(false)}>Back</button>
+          <button className="searchButton" style={{ backgroundColor: "#ff5252" }} onClick={clearArtistList}>
+            Clear All
+          </button>
+        </div>
+      </div>
+    </>
+    );
+  }
+  
+  else if(!viewingArtistList)
   return (
     <div className='card'>
       <h1>Shine</h1>
@@ -145,9 +210,10 @@ function App() {
               <a href={`https://open.spotify.com/artist/${artist.id}`} target='_blank'>
                 <img className="albumCoverImage" src={artist.images[0].url} alt="Artist Profile" />
               </a>
-              <button type="button" className="searchButton" onClick={() => addToArtistList(artist.id)}><CiStar size={24}/></button>
-
-              <h2 className='albumTitle'>{artist.name}</h2>
+              <div className='header-items'>
+                <h2 className='albumTitle'>{artist.name}</h2>
+                <button type="button" className="addButton" onClick={() => addToArtistList(artist)}><CiStar size={24}/></button>
+              </div>
               <p className='albumMeta'>Latest album: {album.name}</p>
             </>
           )}
