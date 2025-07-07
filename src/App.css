@@ -81,7 +81,7 @@ body {
   font-size: 2rem;
   font-weight: bold;
   color: #030339;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0rem;
 }
 
 .albumMeta {
@@ -220,11 +220,18 @@ body {
   font-size: 1em;
 }
 
-
 .header-items {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
+}
+
+.leaderboard-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  margin-left: 1rem;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }

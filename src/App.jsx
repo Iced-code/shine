@@ -8,7 +8,7 @@ import './App.css'
 
 function App() {
   const [input, setInput] = useState("");
-  const [searchType, setSearchType] = useState("album");
+  const [searchType, setSearchType] = useState("artist");
   const [isLoading, setIsLoading] = useState(false);
   const [artist, setArtist] = useState(null);
   const [track, setTrack] = useState(null);
@@ -17,6 +17,19 @@ function App() {
 
   const [artistList, setArtistList] = useState([]);
   const [viewingArtistList, setViewingArtistList] = useState(false);
+
+
+  useEffect(() => {
+    const raw = localStorage.getItem('artistFollowingList');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        setArtistList(parsed);
+      } catch (err) {
+        setArtistList([]);
+      }
+    }
+  }, []);
 
   const loadArtistList = () => {
     let followingList = JSON.parse(localStorage.getItem('artistFollowingList')) || [];
@@ -134,13 +147,7 @@ function App() {
                     <img
                       src={artist.image}
                       alt={artist.name}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "10px",
-                        marginLeft: "1rem",
-                        boxShadow: "0 0 4px rgba(0,0,0,0.2)",
-                      }}
+                      className='leaderboard-image'
                     />
                   )}
                 </div>
@@ -175,7 +182,7 @@ function App() {
           onChange={(e) => {setInput(e.target.value)}}
         />
 
-        <select
+        {/* <select
           className="searchType"
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
@@ -183,7 +190,7 @@ function App() {
           <option value="album">Album</option>
           <option value="track">Track</option>
           <option value="artist">Artist</option>
-        </select>
+        </select> */}
 
         <button type="submit" className='searchButton'>Search</button>
       </form>
@@ -212,7 +219,7 @@ function App() {
               </a>
               <div className='header-items'>
                 <h2 className='albumTitle'>{artist.name}</h2>
-                <button type="button" className="addButton" onClick={() => addToArtistList(artist)}><CiStar size={24}/></button>
+                <button type="button" style={{ backgroundColor: "transparent"}} onClick={() => addToArtistList(artist)}><CiStar size={24}/></button>
               </div>
               <p className='albumMeta'>Latest album: {album.name}</p>
             </>
